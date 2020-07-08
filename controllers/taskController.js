@@ -1,14 +1,34 @@
-var Task = require('../models/task')
-
+var Task = require('../models/task');
+var Comment = require('../models/comment');
+var async = require('async');
 
 exports.get_all_tasks = (req, res) => {
     Task.find()
         .exec((err, tasks) => {
             if (err) {
-                return next(err);
+                next(err);
             }
             res.json({'tasks': tasks});
         });
+}
+
+exports.get_task = (req, res, next) => {
+    // async.parallel returns the results inorder of who finished first
+    async.parallel({
+        task: (callback) => {
+            Task.findById(req.params.id).exec(callback);
+        },
+        comments: (callback) => {
+            Comment.find({'task': req.params.id}).exec(callback);
+        }
+    }, (err, result) => {
+        if (err)
+            next(err)
+        res.json({
+            'task': result.task,
+            'comments': result.comments
+        })
+    });
 }
 
 exports.create_task = (req, res, next) => {
