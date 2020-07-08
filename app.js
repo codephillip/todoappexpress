@@ -10,6 +10,12 @@ var tasksRouter = require('./routes/tasks');
 
 var app = express();
 
+var mongoose = require('mongoose');
+var mongoDB = 'mongodb+srv://admin:MtrNgyVrBr9t!Zp@hellomongo1.sgxho.gcp.mongodb.net/test'
+mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'Mongodb connection error'));
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
